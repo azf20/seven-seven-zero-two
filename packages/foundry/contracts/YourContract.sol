@@ -1,88 +1,94 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-// Useful for debugging. Remove when deploying to a live network.
-import "forge-std/console.sol";
-
-// Use openzeppelin to inherit battle-tested implementations (ERC20, ERC721, etc)
-// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 /**
- * A smart contract that allows changing a state variable of the contract and tracking the changes
- * It also allows the owner to withdraw the Ether in the contract
+ * A proof-of-concept contract that sets its own greeting
+ * Designed to be used by EOAs via EIP-7702
  * @author BuidlGuidl
  */
 contract YourContract {
   // State Variables
-  address public immutable owner;
-  string public greeting = "Building Unstoppable Apps!!!";
-  bool public premium = false;
-  uint256 public totalCounter = 0;
-  mapping(address => uint256) public userGreetingCounter;
+  string public greeting;
+  uint256 public totalCounter;
 
-  // Events: a way to emit log statements from smart contract that can be listened to by external parties
   event GreetingChange(
-    address indexed greetingSetter,
-    string newGreeting,
-    bool premium,
-    uint256 value
+    string newGreeting
   );
 
-  // Constructor: Called once on contract deployment
-  // Check packages/foundry/deploy/Deploy.s.sol
-  constructor(
-    address _owner
-  ) {
-    owner = _owner;
-  }
-
-  // Modifier: used to define a set of rules that must be met before or after a function is executed
-  // Check the withdraw() function
-  modifier isOwner() {
-    // msg.sender: predefined variable that represents address of the account that called the current function
-    require(msg.sender == owner, "Not the Owner");
-    _;
+  function _setGreeting(string memory _newGreeting) internal {
+    greeting = _newGreeting;
+    totalCounter += 1;
+    emit GreetingChange(_newGreeting);
   }
 
   /**
-   * Function that allows anyone to change the state variable "greeting" of the contract and increase the counters
+   * Function that allows the owner to change the state variable "greeting" of the contract and increase the counters
    *
    * @param _newGreeting (string memory) - new greeting to save on the contract
    */
   function setGreeting(
     string memory _newGreeting
-  ) public payable {
-    // Print data to the anvil chain console. Remove when deploying to a live network.
-
-    console.logString("Setting new greeting");
-    console.logString(_newGreeting);
-
-    greeting = _newGreeting;
-    totalCounter += 1;
-    userGreetingCounter[msg.sender] += 1;
-
-    // msg.value: built-in global variable that represents the amount of ether sent with the transaction
-    if (msg.value > 0) {
-      premium = true;
-    } else {
-      premium = false;
-    }
-
-    // emit: keyword used to trigger an event
-    emit GreetingChange(msg.sender, _newGreeting, msg.value > 0, msg.value);
+  ) public {
+    require(msg.sender == address(this), "Not the Owner");
+    _setGreeting(_newGreeting);
   }
 
   /**
-   * Function that allows the owner to withdraw all the Ether in the contract
-   * The function can only be called by the owner of the contract as defined by the isOwner modifier
+   * Function that allows anyone to change the state variable "greeting" of the contract and increase the counters
+   * As long as they have a signature from the owner
+   *
+   * @param _newGreeting (string memory) - new greeting to save on the contract
+   * @param signature (bytes calldata) - signature to verify
    */
-  function withdraw() public isOwner {
-    (bool success,) = owner.call{ value: address(this).balance }("");
-    require(success, "Failed to send Ether");
+  function setGreeting(string memory _newGreeting, bytes calldata signature) public {
+    require(isValidSignature(_newGreeting, totalCounter, signature), "Invalid signature");
+    _setGreeting(_newGreeting);
   }
 
   /**
-   * Function that allows the contract to receive ETH
+   * @dev Validates if a signature is valid for a given greeting and specific counter value
+   * @param _greeting The greeting to verify
+   * @param _counter The counter value used in the signature
+   * @param _signature The signature to verify
+   * @return bool Returns true if the signature is valid
    */
-  receive() external payable { }
+  function isValidSignature(
+    string memory _greeting, 
+    uint256 _counter,
+    bytes calldata _signature
+  ) public view returns (bool) {
+    // Create hash of greeting and counter
+    bytes32 messageHash = keccak256(abi.encodePacked(address(this), _counter, _greeting));
+    // Use OpenZeppelin's toEthSignedMessageHash
+    bytes32 ethSignedMessageHash = MessageHashUtils.toEthSignedMessageHash(messageHash);
+    
+    // Recover signer from signature
+    address signer = ECDSA.recover(ethSignedMessageHash, _signature);
+    
+    return signer == address(this);
+  }
+
+  /**
+   * @dev Convenience function to check signature against current totalCounter
+   */
+  function isValidSignature(
+    string memory _greeting, 
+    bytes calldata _signature
+  ) public view returns (bool) {
+    return isValidSignature(_greeting, totalCounter, _signature);
+  }
+
+  /**
+   * @dev Fallback function to allow contract to receive Ether
+   * The receive keyword is used for empty calldata (plain Ether transfers)
+   */
+  receive() external payable {}
+
+  /**
+   * @dev Fallback function called when msg.data is not empty
+   */
+  fallback() external payable {}
 }

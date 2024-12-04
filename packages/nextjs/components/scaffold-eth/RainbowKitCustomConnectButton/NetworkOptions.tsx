@@ -4,6 +4,7 @@ import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import { getNetworkColor } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
+
 const allowedNetworks = getTargetNetworks();
 
 type NetworkOptionsProps = {
@@ -26,6 +27,7 @@ export const NetworkOptions = ({ hidden = false }: NetworkOptionsProps) => {
               className="menu-item btn-sm !rounded-xl flex gap-3 py-3 whitespace-nowrap"
               type="button"
               onClick={() => {
+                console.log("Switching to", allowedNetwork.name);
                 switchChain?.({ chainId: allowedNetwork.id });
               }}
             >

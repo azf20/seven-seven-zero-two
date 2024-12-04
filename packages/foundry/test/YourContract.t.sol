@@ -8,13 +8,6 @@ contract YourContractTest is Test {
   YourContract public yourContract;
 
   function setUp() public {
-    yourContract = new YourContract(vm.addr(1));
-  }
-
-  function testMessageOnDeployment() public view {
-    require(
-      keccak256(bytes(yourContract.greeting()))
-        == keccak256("Building Unstoppable Apps!!!")
-    );
+    yourContract = new YourContract();
   }
 }

@@ -7,7 +7,7 @@ setup-anvil-wallet:
 
 # Start local chain
 chain: setup-anvil-wallet
-	anvil
+	anvil --hardfork prague
 
 # Start a fork
 fork: setup-anvil-wallet
@@ -19,11 +19,8 @@ build:
 
 # Deploy the project
 deploy:
-	@if [ "$(RPC_URL)" = "localhost" ]; then \
-		forge script script/Deploy.s.sol --rpc-url localhost --password localhost --broadcast --legacy --ffi; \
-	else \
-		forge script script/Deploy.s.sol --rpc-url $(RPC_URL) --broadcast --legacy --ffi; \
-	fi
+	@echo "Deploying to RPC URL: $(RPC_URL)"
+	forge script script/Deploy.s.sol --rpc-url $(RPC_URL) --broadcast --legacy --ffi;
 
 # Build and deploy target
 build-and-deploy: build deploy generate-abis
