@@ -2,6 +2,8 @@
 
 This repository is a proof-of-concept for [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702).
 
+Live demo: https://7702-greeter.vercel.app/
+
 ## Features
 - Burner wallet: stored in the browser's local storage
 - Implementation contract: a simple greeter contract, edited to support EIP-7702 EOA smart accounts
@@ -10,7 +12,7 @@ This repository is a proof-of-concept for [EIP-7702](https://eips.ethereum.org/E
 - Sponsored transactions: all transactions are sponsored (by the sequencer on Odyssey, by a faucet mechanism locally)
 - A look under the hood: you can see the associated code and storage slot changes!
 
-### Miscellaneous notes
+### Technical details
 
 - The Ithaca examples are great, but with all the delegation and authorization in the smart contract as well as the EIP-7702 spec and Viem implementation, it was a little hard to understand what was happening in each step. This much dumber example hopefully demonstrates the bare bones of EIP-7702.
 - This is currently burner wallets only, as JSON-RPC accounts are [not currently supported](https://github.com/wevm/viem/blob/b0e755155f1bdaf2e9e609736c3f4998a441e702/src/experimental/eip7702/actions/signAuthorization.ts#L101) by Viem.
