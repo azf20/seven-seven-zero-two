@@ -108,6 +108,25 @@ export const EIP7702Greeter = () => {
     setIsLoading(false);
   };
 
+  const revoke = async () => {
+    const sponsor = await getSponsor();
+    const authorization = await walletClient.signAuthorization({
+      contractAddress: "0x0000000000000000000000000000000000000000",
+      delegate: true,
+    });
+    if (authorization) {
+    const hash = await walletClient.sendTransaction({
+      to: account.address,
+      authorizationList: [authorization],
+      account: sponsor,
+    });
+    const receipt = await waitForTransactionReceipt(walletClient, { hash });
+    setWriteContractHash(hash);
+    setWriteContractReceipt(receipt);
+    checkDelegation?.();
+    }
+  };
+
   const updateGreeting = async () => {
     if (!newGreeting) return;
     setIsLoading(true);
@@ -179,6 +198,9 @@ export const EIP7702Greeter = () => {
             />
             <button onClick={updateGreeting} className="btn btn-primary whitespace-nowrap" disabled={isLoading}>
               {isLoading ? "Updating..." : "Update Greeting"}
+            </button>
+            <button onClick={revoke} className="btn btn-error whitespace-nowrap" disabled={isLoading}>
+              Revoke 7702
             </button>
           </>
         ) : (

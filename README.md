@@ -8,6 +8,7 @@ Live demo: https://7702-greeter.vercel.app/
 - Burner wallet: stored in the browser's local storage
 - Implementation contract: a simple greeter contract, edited to support EIP-7702 EOA smart accounts
 - Activation: signs the authorization message to use the implementation contract's code and makes an initial greeting update
+- Revokation: signs an authorization message with the zero address to revoke the delegation
 - Updating your greeting: gaslessley update the greeting to a new value of your choosing
 - Sponsored transactions: all transactions are sponsored (by the sequencer on Odyssey, by a faucet mechanism locally)
 - A look under the hood: you can see the associated code and storage slot changes!
@@ -24,6 +25,7 @@ Live demo: https://7702-greeter.vercel.app/
   - EOAs can now run code
   - Certain smart contracts can have a signing key
   - You can no longer revoke ownership of all smart account
+- Storage is forever! (i.e. if you revoke the delegation, the storage is still there)
 
 ### Potential extensions:
 - Demonstrate revocation
