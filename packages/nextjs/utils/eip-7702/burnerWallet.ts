@@ -12,8 +12,8 @@ export const getBurnerPk = () => {
   return generatePrivateKey() as `0x${string}`;
 };
 
-export const get7702BurnerWalletClient = (chain: Chain = anvil) => {
-  const account = privateKeyToAccount(getBurnerPk());
+export const get7702WalletClient = ({ chain = anvil, privateKey }: { chain?: Chain; privateKey?: `0x${string}` }) => {
+  const account = privateKey ? privateKeyToAccount(privateKey) : privateKeyToAccount(getBurnerPk());
   const walletClient = createWalletClient({
     account,
     chain,

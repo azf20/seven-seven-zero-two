@@ -8,7 +8,7 @@ import { useAccount, useBlockNumber, useChainId, useReadContract } from "wagmi";
 import deployedContracts from "~~/contracts/deployedContracts";
 import { useEoaDelegationAddress } from "~~/hooks/eip-7702/useEoaDelegationAddress";
 import { getAFundedLocalAccount } from "~~/utils/eip-7702";
-import { get7702BurnerWalletClient } from "~~/utils/eip-7702/burnerWallet";
+import { get7702WalletClient } from "~~/utils/eip-7702/burnerWallet";
 import dynamic from 'next/dynamic';
 
 const DynamicAddress = dynamic(() => import('~~/components/scaffold-eth').then(mod => mod.Address), {
@@ -21,7 +21,7 @@ export const EIP7702Greeter = () => {
   const [displayGreeting, setDisplayGreeting] = useState("");
   const [storageNonce, setStorageNonce] = useState(0);
   const chainId = useChainId();
-  const walletClient = get7702BurnerWalletClient(chain);
+  const walletClient = get7702WalletClient({ chain });
   const account = walletClient.account;
 
   const contractAddress = deployedContracts[chainId as keyof typeof deployedContracts]?.YourContract.address;
