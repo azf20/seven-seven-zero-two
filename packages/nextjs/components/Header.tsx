@@ -20,6 +20,14 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Home",
     href: "/",
   },
+  {
+    label: "Greeter",
+    href: "/greeter",
+  },
+  {
+    label: "Batches",
+    href: "/batches",
+  },
   ...(process.env.NEXT_PUBLIC_ENVIRONMENT === "localhost"
     ? [
         {

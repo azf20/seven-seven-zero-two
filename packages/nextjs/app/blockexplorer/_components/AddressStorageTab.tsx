@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { Address, toHex } from "viem";
 import { usePublicClient } from "wagmi";
 
-
 export const AddressStorageTab = ({ address, nonce = 0 }: { address: Address; nonce?: number }) => {
   const [storage, setStorage] = useState<string[]>([]);
 
@@ -15,13 +14,21 @@ export const AddressStorageTab = ({ address, nonce = 0 }: { address: Address; no
       const storageData = [];
       let idx = 0;
 
+      let allowedEmptySlots = 1;
+
       while (true) {
         const storageAtPosition = await publicClient?.getStorageAt({
           address: address,
           slot: toHex(idx),
         });
 
-        if (storageAtPosition === "0x" + "0".repeat(64)) break;
+        if (storageAtPosition === "0x" + "0".repeat(64)) {
+          if (allowedEmptySlots > 0) {
+            allowedEmptySlots--;
+          } else {
+            break;
+          }
+        }
 
         if (storageAtPosition) {
           storageData.push(storageAtPosition);

@@ -1,19 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { AccountCodeAndStorage } from "./AccountCodeAndStorage";
 import { TransactionReceipt, encodePacked, keccak256 } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
 import { useAccount, useBlockNumber, useChainId, useReadContract } from "wagmi";
 import deployedContracts from "~~/contracts/deployedContracts";
 import { useEoaDelegationAddress } from "~~/hooks/eip-7702/useEoaDelegationAddress";
-import { getAFundedLocalAccount } from "~~/utils/eip-7702";
 import { get7702WalletClient } from "~~/utils/eip-7702/burnerWallet";
 import { getSponsor } from "~~/utils/eip-7702/sponsor";
-import dynamic from 'next/dynamic';
 
-const DynamicAddress = dynamic(() => import('~~/components/scaffold-eth').then(mod => mod.Address), {
-  ssr: false
+const DynamicAddress = dynamic(() => import("~~/components/scaffold-eth").then(mod => mod.Address), {
+  ssr: false,
 });
 
 export const EIP7702Greeter = () => {
@@ -109,15 +108,15 @@ export const EIP7702Greeter = () => {
       delegate: true,
     });
     if (authorization) {
-    const hash = await walletClient.sendTransaction({
-      to: account.address,
-      authorizationList: [authorization],
-      account: sponsor,
-    });
-    const receipt = await waitForTransactionReceipt(walletClient, { hash });
-    setWriteContractHash(hash);
-    setWriteContractReceipt(receipt);
-    checkDelegation?.();
+      const hash = await walletClient.sendTransaction({
+        to: account.address,
+        authorizationList: [authorization],
+        account: sponsor,
+      });
+      const receipt = await waitForTransactionReceipt(walletClient, { hash });
+      setWriteContractHash(hash);
+      setWriteContractReceipt(receipt);
+      checkDelegation?.();
     }
   };
 

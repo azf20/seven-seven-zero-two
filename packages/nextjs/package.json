@@ -31,6 +31,7 @@
     "react-copy-to-clipboard": "~5.1.0",
     "react-dom": "~18.3.1",
     "react-hot-toast": "~2.4.0",
+    "react-toastify": "^10.0.6",
     "usehooks-ts": "~3.1.0",
     "viem": "2.21.32",
     "wagmi": "2.12.23",
