@@ -9,6 +9,7 @@ import deployedContracts from "~~/contracts/deployedContracts";
 import { useEoaDelegationAddress } from "~~/hooks/eip-7702/useEoaDelegationAddress";
 import { getAFundedLocalAccount } from "~~/utils/eip-7702";
 import { get7702WalletClient } from "~~/utils/eip-7702/burnerWallet";
+import { getSponsor } from "~~/utils/eip-7702/sponsor";
 import dynamic from 'next/dynamic';
 
 const DynamicAddress = dynamic(() => import('~~/components/scaffold-eth').then(mod => mod.Address), {
@@ -66,16 +67,9 @@ export const EIP7702Greeter = () => {
     setDisplayGreeting(greeting || "");
   }, [greeting]);
 
-  const getSponsor = async () => {
-    if (chainId === 31337) {
-      return await getAFundedLocalAccount();
-    }
-    return null; // Odyssey sequencer to sponsor
-  };
-
   const activate = async () => {
     setIsLoading(true);
-    const sponsor = await getSponsor();
+    const sponsor = await getSponsor(chainId);
     const authorization = await walletClient.signAuthorization({
       contractAddress,
       delegate: true,
@@ -109,7 +103,7 @@ export const EIP7702Greeter = () => {
   };
 
   const revoke = async () => {
-    const sponsor = await getSponsor();
+    const sponsor = await getSponsor(chainId);
     const authorization = await walletClient.signAuthorization({
       contractAddress: "0x0000000000000000000000000000000000000000",
       delegate: true,
@@ -132,7 +126,7 @@ export const EIP7702Greeter = () => {
     setIsLoading(true);
     setWriteContractHash(null);
     setWriteContractReceipt(null);
-    const sponsor = await getSponsor();
+    const sponsor = await getSponsor(chainId);
 
     const signature = await walletClient.signMessage({
       message: {

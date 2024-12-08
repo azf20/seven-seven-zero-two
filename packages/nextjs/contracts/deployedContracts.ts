@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     YourContract: {
-      address: "0x3b8011a033f8601c603c593dcae540b37916066f",
+      address: "0x5672b33eea800f1ba1f5c4f8355adac79ea9d71f",
       abi: [
         {
           type: "fallback",
@@ -171,7 +171,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     Batcher: {
-      address: "0x4693b28223af69a485458c312b41689668ca445f",
+      address: "0x5e7f2c68cf06f9d5070f7ebb045e9bf1b7e84674",
       abi: [
         {
           type: "fallback",
@@ -279,7 +279,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     Faucet: {
-      address: "0xc55bb8f75cdfec824e9614d71ec03444702911a9",
+      address: "0x1a8db8cac4fe7aebb745921096ef0b822e8135a2",
       abi: [
         {
           type: "constructor",
@@ -376,7 +376,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     FreeToken: {
-      address: "0x3f6622e82cb1b46296f1a98e572cf761c2e20b68",
+      address: "0xb0fd1ea6545d3f8f80d96e028b7a703331f0f768",
       abi: [
         {
           type: "constructor",
@@ -732,7 +732,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     BuyableToken: {
-      address: "0x6836d748fafc6a683fa7b160dcd2baf40650d6a5",
+      address: "0x7966030da476c2607deff7971f82623fdad1fa41",
       abi: [
         {
           type: "constructor",

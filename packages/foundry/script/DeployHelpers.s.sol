@@ -20,7 +20,7 @@ contract ScaffoldETHDeploy is Script {
   string root;
   string path;
   Deployment[] public deployments;
-  uint256 constant ANVIL_BASE_BALANCE = 10000 ether;
+  uint256 constant ANVIL_BASE_BALANCE = 100000 ether;
 
   /// @notice The deployer address for every run
   address deployer;
