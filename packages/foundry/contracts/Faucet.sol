@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 contract Faucet {
     uint256 public constant DRIP_AMOUNT = 0.001 ether;
-    uint256 public constant MIN_BALANCE_THRESHOLD = 0.1 ether;
+    uint256 public constant MIN_BALANCE_THRESHOLD = 0.05 ether;
     uint256 public constant LOW_BALANCE_PERCENTAGE = 1;
 
     address public immutable owner;
