@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
  */
 contract YourContract {
   // State Variables
+  uint256 private __gap;
   string public greeting;
   uint256 public totalCounter;
 
