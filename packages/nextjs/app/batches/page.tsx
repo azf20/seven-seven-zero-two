@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useChainId } from "wagmi";
 import { EIP7702BatchTransactor } from "~~/components/eip-7702/EIP7702BatchTransactor";
+import deployedContracts from "~~/contracts/deployedContracts";
 import { useBurnerWallets } from "~~/hooks/useBurnerWallets";
 import { getExplorerLink } from "~~/utils/scaffold-eth/transaction";
 
 export default function BurnerWalletsPage() {
   const { wallets, error, createNewWallet } = useBurnerWallets();
   const [showDetails, setShowDetails] = useState(false);
+  const chainId = useChainId();
 
   // Add these contract addresses and chainId
-  const chainId = 31337; // or whatever chain you're using
-  const FAUCET_ADDRESS = "YOUR_FAUCET_ADDRESS";
-  const FREE_TOKEN_ADDRESS = "YOUR_FREE_TOKEN_ADDRESS";
-  const BUYABLE_TOKEN_ADDRESS = "YOUR_BUYABLE_TOKEN_ADDRESS";
+  const FAUCET_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.Faucet.address;
+  const FREE_TOKEN_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.FreeToken.address;
+  const BUYABLE_TOKEN_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.BuyableToken.address;
 
   return (
     <div className="container mx-auto p-4">
@@ -58,7 +60,7 @@ export default function BurnerWalletsPage() {
         <div>7702 Activated</div>
         <div>
           <a
-            href={getExplorerLink(FAUCET_ADDRESS, chainId)}
+            href={getExplorerLink(FAUCET_ADDRESS, chainId, "address")}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-500"
@@ -68,7 +70,7 @@ export default function BurnerWalletsPage() {
         </div>
         <div>
           <a
-            href={getExplorerLink(FREE_TOKEN_ADDRESS, chainId)}
+            href={getExplorerLink(FREE_TOKEN_ADDRESS, chainId, "address")}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-500"
@@ -78,7 +80,7 @@ export default function BurnerWalletsPage() {
         </div>
         <div>
           <a
-            href={getExplorerLink(BUYABLE_TOKEN_ADDRESS, chainId)}
+            href={getExplorerLink(BUYABLE_TOKEN_ADDRESS, chainId, "address")}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-500"

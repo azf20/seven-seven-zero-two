@@ -5,19 +5,22 @@ import { Address } from "~~/components/scaffold-eth";
 import { useEIP7702BatchTransactor } from "~~/hooks/eip-7702/useEIP7702BatchTransactor";
 import { WalletData } from "~~/hooks/useBurnerWallets";
 
+
 interface BalanceDisplayProps {
   value: string;
   label: string;
   onRequest?: () => void;
+  disabled?: boolean;
 }
 
-const BalanceDisplay = ({ value, label, onRequest }: BalanceDisplayProps) => (
+const BalanceDisplay = ({ value, label, onRequest, disabled }: BalanceDisplayProps) => (
   <div className="flex items-center gap-2">
     {Number(Number(value).toFixed(5))} {label}
     {onRequest && (
       <button
         onClick={onRequest}
-        className="bg-blue-500 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+        className="bg-blue-500 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm disabled:opacity-50"
+        disabled={disabled}
       >
         +
       </button>
@@ -43,6 +46,7 @@ export const EIP7702BatchTransactor = ({ wallet, allWallets, createNewWallet }: 
     handleRequestBuyableToken,
     dropTokens,
     moveEverything,
+    isLoading,
   } = useEIP7702BatchTransactor(wallet);
 
   const hasBalance = Number(formatEther(balance)) > 0;
@@ -63,22 +67,26 @@ export const EIP7702BatchTransactor = ({ wallet, allWallets, createNewWallet }: 
           value={formatEther(balance)}
           label="ETH"
           onRequest={hasBalance ? handleRequestEth : undefined}
+          disabled={isLoading}
         />
         <BalanceDisplay
           value={formatEther(freeTokenBalance)}
           label="Free Tokens"
           onRequest={hasBalance ? handleRequestFreeToken : undefined}
+          disabled={isLoading}
         />
         <BalanceDisplay
           value={formatEther(buyableTokenBalance)}
           label="Buyable Tokens"
           onRequest={hasBalance ? handleRequestBuyableToken : undefined}
+          disabled={isLoading}
         />
         <div className="flex gap-2">
           {!hasAnyAssets && (
             <button
               onClick={dropTokens}
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              disabled={isLoading}
             >
               Drop
             </button>
@@ -87,6 +95,7 @@ export const EIP7702BatchTransactor = ({ wallet, allWallets, createNewWallet }: 
             <button
               onClick={() => setIsMoveModalOpen(true)}
               className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+              disabled={isLoading}
             >
               Move
             </button>
@@ -102,7 +111,8 @@ export const EIP7702BatchTransactor = ({ wallet, allWallets, createNewWallet }: 
               <button
                 key={destinationWallet.address}
                 onClick={() => handleMove(destinationWallet.address)}
-                className="w-full text-left p-2 hover:bg-blue-600 rounded"
+                className="w-full text-left p-2 hover:bg-blue-600 rounded disabled:opacity-50"
+                disabled={isLoading}
               >
                 <Address disableAddressLink={true} address={destinationWallet.address} />
               </button>
@@ -111,7 +121,8 @@ export const EIP7702BatchTransactor = ({ wallet, allWallets, createNewWallet }: 
             onClick={async () => {
               await createNewWallet();
             }}
-            className="w-full text-left p-2 bg-blue-500 hover:bg-blue-700 text-white rounded"
+            className="w-full text-left p-2 bg-blue-500 hover:bg-blue-700 text-white rounded disabled:opacity-50"
+            disabled={isLoading}
           >
             + Create New Burner Wallet
           </button>

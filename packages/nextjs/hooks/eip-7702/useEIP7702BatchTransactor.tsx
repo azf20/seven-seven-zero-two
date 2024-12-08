@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { maxUint256 } from "viem";
 import { concat, encodeFunctionData, encodePacked, keccak256, size } from "viem";
@@ -12,6 +12,8 @@ import { getSponsor } from "~~/utils/eip-7702/sponsor";
 import { showTransactionToast } from "~~/utils/scaffold-eth/transaction";
 
 export function useEIP7702BatchTransactor(wallet: WalletData) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { isDelegated, checkDelegation } = useEoaDelegationAddress(wallet.address);
   const chainId = useChainId();
   const chains = useChains();
@@ -22,10 +24,10 @@ export function useEIP7702BatchTransactor(wallet: WalletData) {
 
   const walletClient = get7702WalletClient({ privateKey: wallet.privateKey, chain });
 
-  const freeTokenInfo = deployedContracts[31337]?.FreeToken;
-  const buyableTokenInfo = deployedContracts[31337]?.BuyableToken;
-  const faucetInfo = deployedContracts[31337]?.Faucet;
-  const batcherInfo = deployedContracts[31337]?.Batcher;
+  const freeTokenInfo = deployedContracts[chainId as keyof typeof deployedContracts]?.FreeToken;
+  const buyableTokenInfo = deployedContracts[chainId as keyof typeof deployedContracts]?.BuyableToken;
+  const faucetInfo = deployedContracts[chainId as keyof typeof deployedContracts]?.Faucet;
+  const batcherInfo = deployedContracts[chainId as keyof typeof deployedContracts]?.Batcher;
 
   const { data, refetch } = useReadContracts({
     contracts: [
@@ -90,6 +92,7 @@ export function useEIP7702BatchTransactor(wallet: WalletData) {
     functionName: string;
     args: any[];
   }) => {
+    setIsLoading(true);
     try {
       console.log(`Executing ${functionName} for ${wallet.address}`);
       const hash = await walletClient.writeContract({
@@ -100,14 +103,16 @@ export function useEIP7702BatchTransactor(wallet: WalletData) {
         chain,
         account: walletClient.account,
       });
-
-      const receipt = await waitForTransactionReceipt(walletClient, { hash });
-      console.log("Transaction confirmed:", receipt.transactionHash);
+      console.log("Transaction confirmed:", hash);
+      showTransactionToast(hash, chainId, "info");
+      await waitForTransactionReceipt(walletClient, { hash });
       showTransactionToast(hash, chainId);
     } catch (error) {
       console.error(error);
       toast.error(`Transaction failed: ${(error as Error).message}`);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -220,6 +225,7 @@ export function useEIP7702BatchTransactor(wallet: WalletData) {
   };
 
   const executeBatchedCalls = async (calls: { to: string; value: bigint; data?: `0x${string}` }[]) => {
+    setIsLoading(true);
     try {
       const sponsor = await getSponsor(chainId);
       const authorization = await walletClient.signAuthorization({
@@ -250,14 +256,16 @@ export function useEIP7702BatchTransactor(wallet: WalletData) {
         authorizationList: [authorization],
         account: sponsor,
       });
-
-      const receipt = await waitForTransactionReceipt(walletClient, { hash });
+      showTransactionToast(hash, chainId, "info");
+      console.log("Transaction hash:", hash);
+      await waitForTransactionReceipt(walletClient, { hash });
       showTransactionToast(hash, chainId);
-      console.log("Transaction hash:", receipt.transactionHash);
     } catch (error) {
       console.error(error);
       toast.error(`Transaction failed: ${(error as Error).message}`);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -271,5 +279,6 @@ export function useEIP7702BatchTransactor(wallet: WalletData) {
     handleRequestBuyableToken,
     dropTokens,
     moveEverything,
+    isLoading,
   };
 }

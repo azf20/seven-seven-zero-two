@@ -18,8 +18,8 @@ contract DeployScript is ScaffoldETHDeploy {
   }
 
   function run() external ScaffoldEthDeployerRunner {
-    // YourContract yourContract = new YourContract();
-    // logNewContract("YourContract", address(yourContract));
+    YourContract yourContract = new YourContract();
+    logNewContract("YourContract", address(yourContract));
 
     Batcher batcher = new Batcher();
     logNewContract("Batcher", address(batcher));

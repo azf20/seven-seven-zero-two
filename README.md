@@ -4,7 +4,7 @@ This repository is a proof-of-concept for [EIP-7702](https://eips.ethereum.org/E
 
 Live demo: https://7702-greeter.vercel.app/
 
-## Features
+## Greeter
 - Burner wallet: stored in the browser's local storage
 - Implementation contract: a simple greeter contract, edited to support EIP-7702 EOA smart accounts
 - Activation: signs the authorization message to use the implementation contract's code and makes an initial greeting update
@@ -12,6 +12,13 @@ Live demo: https://7702-greeter.vercel.app/
 - Updating your greeting: gaslessley update the greeting to a new value of your choosing
 - Sponsored transactions: all transactions are sponsored (by the sequencer on Odyssey, by a faucet mechanism locally)
 - A look under the hood: you can see the associated code and storage slot changes!
+
+## Batches
+- A batcher contract that allows you to batch multiple transactions together from your 7702-enabled EOA smart account
+- Using some example contracts (Faucet, BuyableToken, FreeToken) to demonstrate the flexibility of EIP-7702
+- Drop multiple assets and then Move them to another burner in a single transaction!
+- Using new burner wallets in indexedDB (to avoid delegate conflicts with the existing burner wallet)
+- Still on Odyssey so sponsored by the sequencer!
 
 ### Technical details
 
@@ -26,10 +33,9 @@ Live demo: https://7702-greeter.vercel.app/
   - Certain smart contracts can have a signing key
   - You can no longer revoke ownership of all smart account
 - Storage is forever! (i.e. if you revoke the delegation, the storage is still there)
+- Which means you need to be careful with "upgrading" the smart contract code!
 
 ### Potential extensions:
-- Demonstrate revocation
-- More "useful" functionality in the delegated smart contract :) (e.g. approve and swap, generic multisig functionality, sub-permissions)
 - Interacting with multiple EOA smart accounts in one transaction (e.g. to withdraw from all your EOAs at once!)
 
 ### References
@@ -87,3 +93,18 @@ Start the Next.js app:
 ```
 yarn start
 ```
+
+
+  Batcher deployed at: 0x5e7F2C68cF06F9d5070F7ebb045E9bF1b7E84674
+  Faucet deployed at: 0x1a8DB8Cac4fe7aEbB745921096EF0b822E8135a2
+  FreeToken deployed at: 0xB0FD1eA6545D3F8f80d96e028b7a703331f0F768
+  BuyableToken deployed at: 0x7966030da476C2607DeFf7971f82623FDAd1fA41
+
+
+forge verify-contract \
+  --rpc-url https://odyssey.ithaca.xyz \
+  --verifier blockscout \
+  --verifier-url 'https://odyssey-explorer.ithaca.xyz/api/' \
+  --compiler-version v0.8.28 \
+  0x7966030da476C2607DeFf7971f82623FDAd1fA41 \
+  contracts/BuyableToken.sol:BuyableToken
