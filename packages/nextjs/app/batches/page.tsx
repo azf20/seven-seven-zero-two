@@ -7,12 +7,14 @@ import deployedContracts from "~~/contracts/deployedContracts";
 import { useBurnerWallets } from "~~/hooks/useBurnerWallets";
 import { getExplorerLink } from "~~/utils/scaffold-eth/transaction";
 
+
 export default function BurnerWalletsPage() {
   const { wallets, error, createNewWallet } = useBurnerWallets();
   const [showDetails, setShowDetails] = useState(false);
   const chainId = useChainId();
 
   // Add these contract addresses and chainId
+  const BATCHER_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.Batcher.address;
   const FAUCET_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.Faucet.address;
   const FREE_TOKEN_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.FreeToken.address;
   const BUYABLE_TOKEN_ADDRESS = deployedContracts[chainId as keyof typeof deployedContracts]?.BuyableToken.address;
@@ -55,9 +57,18 @@ export default function BurnerWalletsPage() {
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 
       {/* Header row */}
-      <div className="grid grid-cols-6 gap-4 mb-2 font-bold">
-        <div>Address</div>
-        <div>7702 Activated</div>
+      <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 mb-2 font-bold">
+        <div className="hidden sm:block">Address</div>
+        <div>
+          <a
+            href={getExplorerLink(BATCHER_ADDRESS, chainId, "address")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-500"
+          >
+            7702 Contract ↗
+          </a>
+        </div>
         <div>
           <a
             href={getExplorerLink(FAUCET_ADDRESS, chainId, "address")}
@@ -88,7 +99,7 @@ export default function BurnerWalletsPage() {
             Buyable Tokens ↗
           </a>
         </div>
-        <div>Actions</div>
+        <div className="hidden sm:block">Actions</div>
       </div>
 
       <div className="space-y-2">
