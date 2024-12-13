@@ -11,6 +11,7 @@ import { useEoaDelegationAddress } from "~~/hooks/eip-7702/useEoaDelegationAddre
 import { get7702WalletClient } from "~~/utils/eip-7702/burnerWallet";
 import { getSponsor } from "~~/utils/eip-7702/sponsor";
 
+
 const DynamicAddress = dynamic(() => import("~~/components/scaffold-eth").then(mod => mod.Address), {
   ssr: false,
 });
@@ -205,7 +206,7 @@ export const EIP7702Greeter = () => {
 
       {/* Transaction Status */}
       {(writeContractHash || writeContractReceipt) && (
-        <div className="bg-base-100 p-4 rounded-xl space-y-2">
+        <div className="bg-base-100 p-4 rounded-xl space-y-2 break-all">
           {writeContractHash && (
             <div className="text-sm">
               Tx:{" "}

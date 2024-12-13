@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { NextPage } from "next";
-import { EIP7702Greeter } from "~~/components/eip-7702/EIP7702Greeter";
+
 
 const Home: NextPage = () => {
   return (
